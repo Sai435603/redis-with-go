@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -39,7 +40,7 @@ func main() {
 	}`
 	err = rdb.Set(ctx, "user:raw", rawJSON, 0).Err()
 	if err != nil {
-		fmt.Errorf("%v", err)
+		log.Printf("%v", err)
 		return
 	}
 	fmt.Println("Saved raw JSON string directly to Redis!")
