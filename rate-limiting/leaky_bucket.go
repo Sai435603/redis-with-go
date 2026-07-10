@@ -20,9 +20,7 @@ func NewLeakyBucket(capacity int, leakRate time.Duration) *LeakyBucket {
 		for range ticker.C {
 			select {
 			case <-lb.queue:
-				// Successfully processed a request
 			default:
-				// Bucket is empty, do nothing
 			}
 		}
 	}()
@@ -33,8 +31,8 @@ func NewLeakyBucket(capacity int, leakRate time.Duration) *LeakyBucket {
 func (lb *LeakyBucket) Allow() bool {
 	select {
 	case lb.queue <- struct{}{}:
-		return true // Fits in the bucket
+		return true
 	default:
-		return false // Bucket is full (overflow)
+		return false
 	}
 }
