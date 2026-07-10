@@ -2,7 +2,7 @@
 // Pros: Very memory efficient and easy to implement.
 // Cons: The "Edge Spike" problem. A user can send 100 requests at 12:00:59 and 100 at 12:01:01, effectively bypassing the intended limit within a 2-second span.
 
-package main
+package ratelimit 
 
 import (
 	"sync"
