@@ -94,3 +94,40 @@ func refreshSession(client *redis.Client, sessionID string) {
 		fmt.Println("Error refreshing session:", err)
 	}
 }
+
+//otp -service
+
+func generateOTP(client *redis.Client, email string, otpCode string) {
+	// OTP is only valid for 3 minutes
+	otpDuration := 3 * time.Minute
+	redisKey := "otp:" + email
+
+	err := client.Set(ctx, redisKey, otpCode, otpDuration).Err()
+	if err != nil {
+		fmt.Println("Error storing OTP:", err)
+		return
+	}
+	fmt.Printf("OTP generated and sent to %s. It expires in 3 minutes.\n", email)
+}
+
+func verifyOTP(client *redis.Client, email string, providedOTP string) bool {
+	redisKey := "otp:" + email
+
+	// Fetch the OTP
+	storedOTP, err := client.Get(ctx, redisKey).Result()
+	if err == redis.Nil {
+		fmt.Println("OTP has expired or does not exist.")
+		return false
+	} else if err != nil {
+		fmt.Println("Error fetching OTP:", err)
+		return false
+	}
+
+	// Verify and delete upon single use
+	if storedOTP == providedOTP {
+		client.Del(ctx, redisKey) // OTPs are single-use!
+		return true
+	}
+
+	return false
+}
